@@ -1,0 +1,4 @@
+module CCPUShim {
+    header "shim.h"
+    export *
+}
