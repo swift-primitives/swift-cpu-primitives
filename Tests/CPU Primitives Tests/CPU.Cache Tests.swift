@@ -19,7 +19,7 @@ struct CPUCacheTests {
     struct PrefetchTests {
         @Test("prefetch read completes without error")
         func prefetchReadCompletes() {
-            var buffer = [UInt8](repeating: 0, count: 64)
+            let buffer = [UInt8](repeating: 0, count: 64)
             buffer.withUnsafeBytes { ptr in
                 CPU.Cache.prefetch.read(ptr.baseAddress!)
             }
