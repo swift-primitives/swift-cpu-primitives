@@ -38,9 +38,10 @@ extension CPU.Cache.Prefetch {
     /// - ARM: PRFM PLDL1KEEP
     ///
     /// - Parameter pointer: Memory location to prefetch.
+    @unsafe
     @inline(__always)
     public func read(_ pointer: UnsafeRawPointer) {
-        swift_cpu_cache_prefetch_read_v1(pointer)
+        unsafe swift_cpu_cache_prefetch_read_v1(pointer)
     }
 
     /// Prefetch for writing.
@@ -51,8 +52,9 @@ extension CPU.Cache.Prefetch {
     /// - ARM: PRFM PSTL1KEEP
     ///
     /// - Parameter pointer: Memory location to prefetch.
+    @unsafe
     @inline(__always)
     public func write(_ pointer: UnsafeMutableRawPointer) {
-        swift_cpu_cache_prefetch_write_v1(pointer)
+        unsafe swift_cpu_cache_prefetch_write_v1(pointer)
     }
 }

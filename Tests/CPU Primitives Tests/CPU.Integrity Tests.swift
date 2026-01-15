@@ -19,12 +19,12 @@ struct CPUIntegrityCyclicCastagnoliTests {
     func computeConsistent() {
         let data: [UInt8] = [0x01, 0x02, 0x03, 0x04, 0x05]
 
-        let crc1 = data.withUnsafeBytes { buffer in
-            CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
+        let crc1 = unsafe data.withUnsafeBytes { buffer in
+            unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
 
-        let crc2 = data.withUnsafeBytes { buffer in
-            CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
+        let crc2 = unsafe data.withUnsafeBytes { buffer in
+            unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
 
         #expect(crc1 == crc2)
@@ -34,8 +34,8 @@ struct CPUIntegrityCyclicCastagnoliTests {
     func computeEmptyData() {
         let data: [UInt8] = []
 
-        let crc = data.withUnsafeBytes { buffer in
-            CPU.Integrity.Cyclic.Castagnoli.compute(buffer, seed: 0)
+        let crc = unsafe data.withUnsafeBytes { buffer in
+            unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer, seed: 0)
         }
 
         #expect(crc == 0)
@@ -48,16 +48,16 @@ struct CPUIntegrityCyclicCastagnoliTests {
         let combined: [UInt8] = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06]
 
         // Compute CRC of combined data
-        let crcCombined = combined.withUnsafeBytes { buffer in
-            CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
+        let crcCombined = unsafe combined.withUnsafeBytes { buffer in
+            unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
 
         // Compute CRC in two parts using seed
-        let crcPart1 = data1.withUnsafeBytes { buffer in
-            CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
+        let crcPart1 = unsafe data1.withUnsafeBytes { buffer in
+            unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
-        let crcChained = data2.withUnsafeBytes { buffer in
-            CPU.Integrity.Cyclic.Castagnoli.compute(buffer, seed: crcPart1)
+        let crcChained = unsafe data2.withUnsafeBytes { buffer in
+            unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer, seed: crcPart1)
         }
 
         #expect(crcCombined == crcChained)
@@ -68,8 +68,8 @@ struct CPUIntegrityCyclicCastagnoliTests {
         // "123456789" has a well-known CRC-32C value: 0xE3069283
         let data = Array("123456789".utf8)
 
-        let crc = data.withUnsafeBytes { buffer in
-            CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
+        let crc = unsafe data.withUnsafeBytes { buffer in
+            unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
 
         #expect(crc == 0xE3069283)
@@ -80,12 +80,12 @@ struct CPUIntegrityCyclicCastagnoliTests {
         let data1: [UInt8] = [0x01, 0x02, 0x03]
         let data2: [UInt8] = [0x01, 0x02, 0x04]
 
-        let crc1 = data1.withUnsafeBytes { buffer in
-            CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
+        let crc1 = unsafe data1.withUnsafeBytes { buffer in
+            unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
 
-        let crc2 = data2.withUnsafeBytes { buffer in
-            CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
+        let crc2 = unsafe data2.withUnsafeBytes { buffer in
+            unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
 
         #expect(crc1 != crc2)
@@ -96,8 +96,8 @@ struct CPUIntegrityCyclicCastagnoliTests {
         // Test with 1MB of data
         let data = [UInt8](repeating: 0xAB, count: 1024 * 1024)
 
-        let crc = data.withUnsafeBytes { buffer in
-            CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
+        let crc = unsafe data.withUnsafeBytes { buffer in
+            unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
 
         // Just verify it completes and returns a value
