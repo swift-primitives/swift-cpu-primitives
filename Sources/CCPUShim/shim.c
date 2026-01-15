@@ -206,8 +206,8 @@ unsigned int swift_cpu_integrity_cyclic_castagnoli_v1(const void* data, unsigned
         crc = __builtin_ia32_crc32qi(crc, *buf);
     }
     return ~crc;
-#elif SWIFT_CPU_ARM64
-    // ARM64: Use hardware CRC32C
+#elif SWIFT_CPU_ARM64 && defined(__ARM_FEATURE_CRC32)
+    // ARM64 with CRC32 extension: Use hardware CRC32C
     while (len >= 8) {
         __asm__ __volatile__(
             "crc32cx %w0, %w0, %1"
