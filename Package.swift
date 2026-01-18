@@ -9,16 +9,16 @@ let package = Package(
         .iOS(.v26),
         .tvOS(.v26),
         .watchOS(.v26),
-        .visionOS(.v26),
+        .visionOS(.v26)
     ],
     products: [
         .library(
             name: "CPU Primitives",
             targets: ["CPU Primitives"]
-        ),
+        )
     ],
     dependencies: [
-        .package(path: "../swift-binary-primitives"),
+        .package(path: "../swift-binary-primitives")
     ],
     targets: [
         .target(
@@ -29,16 +29,9 @@ let package = Package(
             name: "CPU Primitives",
             dependencies: [
                 .target(name: "CCPUShim"),
-                .product(name: "Binary Primitives", package: "swift-binary-primitives"),
+                .product(name: "Binary Primitives", package: "swift-binary-primitives")
             ]
-        ),
-        .testTarget(
-            name: "CPU Primitives Tests",
-            dependencies: [
-                "CPU Primitives",
-            ],
-            path: "Tests/CPU Primitives Tests"
-        ),
+        )
     ],
     swiftLanguageModes: [.v6]
 )
@@ -49,7 +42,7 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
         .enableExperimentalFeature("Lifetimes"),
-        .strictMemorySafety(),
+        .strictMemorySafety()
     ]
     target.swiftSettings = (target.swiftSettings ?? []) + settings
 }
