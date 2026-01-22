@@ -18,7 +18,9 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(path: "../swift-binary-primitives")
+        .package(path: "../swift-binary-primitives"),
+        .package(path: "../swift-bit-primitives"),
+        .package(path: "../swift-dimension-primitives"),
     ],
     targets: [
         .target(
@@ -29,7 +31,9 @@ let package = Package(
             name: "CPU Primitives",
             dependencies: [
                 .target(name: "CCPUShim"),
-                .product(name: "Binary Primitives", package: "swift-binary-primitives")
+                .product(name: "Binary Primitives", package: "swift-binary-primitives"),
+                .product(name: "Bit Primitives", package: "swift-bit-primitives"),
+                .product(name: "Dimension Primitives", package: "swift-dimension-primitives"),
             ]
         )
     ],
