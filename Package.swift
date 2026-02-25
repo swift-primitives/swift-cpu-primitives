@@ -35,7 +35,13 @@ let package = Package(
                 .product(name: "Bit Primitives", package: "swift-bit-primitives"),
                 .product(name: "Dimension Primitives", package: "swift-dimension-primitives"),
             ]
-        )
+        ),
+        .testTarget(
+            name: "CPU Primitives Tests",
+            dependencies: [
+                "CPU Primitives",
+            ]
+        ),
     ],
     swiftLanguageModes: [.v6]
 )
@@ -46,6 +52,7 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
         .enableExperimentalFeature("Lifetimes"),
         .enableExperimentalFeature("SuppressedAssociatedTypes"),
         .enableExperimentalFeature("SuppressedAssociatedTypesWithDefaults"),
