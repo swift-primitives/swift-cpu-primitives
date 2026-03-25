@@ -1,4 +1,5 @@
 module CCPUShim {
     header "shim.h"
+    header "atomic.h"
     export *
 }
