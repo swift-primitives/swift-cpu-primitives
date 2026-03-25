@@ -30,7 +30,7 @@ extension CPU.Barrier.Hardware {
     ///
     /// - x86: MFENCE
     /// - ARM: DMB ISH
-    @inline(__always)
+    @inline(always)
     public func full() {
         swift_cpu_barrier_full_v1()
     }
@@ -42,7 +42,7 @@ extension CPU.Barrier.Hardware {
     ///
     /// - x86: LFENCE
     /// - ARM: DMB ISHLD
-    @inline(__always)
+    @inline(always)
     public func load() {
         swift_cpu_barrier_load_v1()
     }
@@ -54,7 +54,7 @@ extension CPU.Barrier.Hardware {
     ///
     /// - x86: SFENCE
     /// - ARM: DMB ISHST
-    @inline(__always)
+    @inline(always)
     public func store() {
         swift_cpu_barrier_store_v1()
     }

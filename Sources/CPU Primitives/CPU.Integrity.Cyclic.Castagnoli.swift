@@ -35,7 +35,7 @@ extension CPU.Integrity.Cyclic.Castagnoli {
     ///   - seed: Initial CRC value (default 0). Use for chained computation.
     /// - Returns: The CRC-32C checksum.
     @unsafe
-    @inline(__always)
+    @inline(always)
     public static func compute(
         _ data: UnsafeRawBufferPointer,
         seed: CPU.Integrity.Cyclic.Checksum = 0

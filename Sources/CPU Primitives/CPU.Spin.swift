@@ -35,7 +35,7 @@ extension CPU.Spin {
     /// - Timing behavior
     ///
     /// It is a hint only, not a contract.
-    @inline(__always)
+    @inline(always)
     public static func hint() {
         swift_cpu_spin_hint_v1()
     }

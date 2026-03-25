@@ -35,7 +35,7 @@ extension CPU.Timestamp.Read {
     /// - ARM: CNTVCT_EL0 (virtual counter, may have hypervisor offset)
     ///
     /// - Returns: A counter value with architecture-dependent semantics.
-    @inline(__always)
+    @inline(always)
     public func callAsFunction() -> CPU.Timestamp {
         .init(swift_cpu_timestamp_read_v1())
     }

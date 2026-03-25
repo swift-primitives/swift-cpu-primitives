@@ -40,7 +40,7 @@ extension CPU.Barrier.Compiler {
     ///
     /// - Cross-thread synchronization (use `hardware.*` or atomics)
     /// - Ensuring visibility to other cores (use `hardware.*`)
-    @inline(__always)
+    @inline(always)
     public func callAsFunction() {
         swift_cpu_barrier_compiler_v1()
     }
