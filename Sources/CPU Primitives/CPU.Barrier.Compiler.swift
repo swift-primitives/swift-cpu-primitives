@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import CCPUShim
+public import CCPUShim
 
 extension CPU.Barrier {
     /// Compiler-only barrier accessor.

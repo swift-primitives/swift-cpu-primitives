@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import CCPUShim
+public import CCPUShim
 
 extension CPU.Cache {
     /// Prefetch operation accessor.

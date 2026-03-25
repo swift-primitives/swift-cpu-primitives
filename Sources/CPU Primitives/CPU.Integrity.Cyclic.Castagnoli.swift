@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import CCPUShim
+public import CCPUShim
 
 extension CPU.Integrity.Cyclic {
     /// Castagnoli polynomial (0x1EDC6F41) operations.
