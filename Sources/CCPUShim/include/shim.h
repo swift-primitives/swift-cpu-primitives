@@ -20,20 +20,8 @@ extern "C" {
 // All symbols use _v1 suffix. Symbols are never removed, only superseded.
 // This prevents silent ABI breakage if semantics need revision.
 
-// Spin hints (PAUSE on x86, YIELD on ARM)
-void swift_cpu_spin_hint_v1(void);
-
-// Memory barriers - compiler only (no CPU instruction)
-void swift_cpu_barrier_compiler_v1(void);
-
-// Memory barriers - hardware (include compiler barrier)
-void swift_cpu_barrier_full_v1(void);
-void swift_cpu_barrier_load_v1(void);
-void swift_cpu_barrier_store_v1(void);
-
-// Cache prefetch operations
-void swift_cpu_cache_prefetch_read_v1(const void* ptr);
-void swift_cpu_cache_prefetch_write_v1(void* ptr);
+// Multi-instruction operations (non-inline).
+// Single-instruction operations (barriers, spin, prefetch) are in barrier.h.
 
 // Timestamp counter (RDTSC on x86, CNTVCT_EL0 on ARM)
 unsigned long long swift_cpu_timestamp_read_v1(void);
