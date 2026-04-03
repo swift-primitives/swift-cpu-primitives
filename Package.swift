@@ -31,7 +31,8 @@ let package = Package(
             name: "CPU Primitives",
             dependencies: [
                 .target(name: "CCPUShim"),
-                .product(name: "Binary Primitives", package: "swift-binary-primitives"),
+                .product(name: "Binary Primitives Core", package: "swift-binary-primitives"),
+                .product(name: "Binary Serializable Primitives", package: "swift-binary-primitives"),
                 .product(name: "Bit Primitives", package: "swift-bit-primitives"),
                 .product(name: "Dimension Primitives", package: "swift-dimension-primitives"),
             ]
