@@ -71,8 +71,14 @@ unsigned int swift_cpu_integrity_cyclic_castagnoli_v1(const void* data, unsigned
     // Hardware instructions work with raw CRC, so we apply XOR at boundaries
     unsigned int crc = ~seed;
 
-#if SWIFT_CPU_X86 && !defined(SWIFT_CPU_MSVC)
-    // x86 with GCC/Clang: Use hardware CRC32C if available
+#if SWIFT_CPU_X86 && !defined(SWIFT_CPU_MSVC) && defined(__SSE4_2__)
+    // x86 with GCC/Clang: Use hardware CRC32C if available.
+    // Gated on __SSE4_2__ so __builtin_ia32_crc32* is only reached when
+    // the compiler target enables the CRC32 feature. Without this gate,
+    // multi-arch builds (notably iOS Simulator, which builds both arm64
+    // and x86_64 slices) fail to compile the x86_64 slice because the
+    // built-in emits "needs target feature crc32" unless -msse4.2 is on.
+    // Matches the ARM pattern below, which gates on __ARM_FEATURE_CRC32.
     // Process 8 bytes at a time
     while (len >= 8) {
         crc = (unsigned int)__builtin_ia32_crc32di(crc, *(const unsigned long long*)buf);
