@@ -15,22 +15,22 @@ import Testing
 @Suite("CPU.Spin")
 struct CPUSpinTests {
 
-    @Test("hint completes without error")
-    func hintCompletesWithoutError() {
+    @Test
+    func `hint completes without error`() {
         // Smoke test - hint should complete without crashing
         CPU.Spin.hint()
     }
 
-    @Test("hint can be called repeatedly")
-    func hintCanBeCalledRepeatedly() {
+    @Test
+    func `hint can be called repeatedly`() {
         // Verify repeated hints don't cause issues
         for _ in 0..<1000 {
             CPU.Spin.hint()
         }
     }
 
-    @Test("hint from concurrent tasks")
-    func hintFromConcurrentTasks() async {
+    @Test
+    func `hint from concurrent tasks`() async {
         // Verify hint is safe under concurrent execution
         let iterations = 100
         let taskCount = 4

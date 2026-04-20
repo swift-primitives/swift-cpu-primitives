@@ -15,8 +15,8 @@ import Testing
 @Suite("CPU.Integrity.Cyclic.Castagnoli")
 struct CPUIntegrityCyclicCastagnoliTests {
 
-    @Test("compute returns consistent results")
-    func computeConsistent() {
+    @Test
+    func `compute returns consistent results`() {
         let data: [UInt8] = [0x01, 0x02, 0x03, 0x04, 0x05]
 
         let crc1 = unsafe data.withUnsafeBytes { buffer in
@@ -30,8 +30,8 @@ struct CPUIntegrityCyclicCastagnoliTests {
         #expect(crc1 == crc2)
     }
 
-    @Test("compute with empty data returns seed")
-    func computeEmptyData() {
+    @Test
+    func `compute with empty data returns seed`() {
         let data: [UInt8] = []
 
         let crc = unsafe data.withUnsafeBytes { buffer in
@@ -41,8 +41,8 @@ struct CPUIntegrityCyclicCastagnoliTests {
         #expect(crc == 0)
     }
 
-    @Test("compute with seed chains correctly")
-    func computeWithSeedChains() {
+    @Test
+    func `compute with seed chains correctly`() {
         let data1: [UInt8] = [0x01, 0x02, 0x03]
         let data2: [UInt8] = [0x04, 0x05, 0x06]
         let combined: [UInt8] = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06]
@@ -63,8 +63,8 @@ struct CPUIntegrityCyclicCastagnoliTests {
         #expect(crcCombined == crcChained)
     }
 
-    @Test("compute known test vector")
-    func computeKnownTestVector() {
+    @Test
+    func `compute known test vector`() {
         // "123456789" has a well-known CRC-32C value: 0xE3069283
         let data = Array("123456789".utf8)
 
@@ -75,8 +75,8 @@ struct CPUIntegrityCyclicCastagnoliTests {
         #expect(crc == 0xE3069283)
     }
 
-    @Test("compute different data produces different CRC")
-    func computeDifferentDataDifferentCRC() {
+    @Test
+    func `compute different data produces different CRC`() {
         let data1: [UInt8] = [0x01, 0x02, 0x03]
         let data2: [UInt8] = [0x01, 0x02, 0x04]
 
@@ -91,8 +91,8 @@ struct CPUIntegrityCyclicCastagnoliTests {
         #expect(crc1 != crc2)
     }
 
-    @Test("compute large data")
-    func computeLargeData() {
+    @Test
+    func `compute large data`() {
         // Test with 1MB of data
         let data = [UInt8](repeating: 0xAB, count: 1024 * 1024)
 

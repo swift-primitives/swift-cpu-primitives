@@ -17,18 +17,18 @@ struct CPUAtomicTests {
 
     // MARK: - Namespace
 
-    @Test("Atomic namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Atomic namespace exists`() {
         _ = CPU.Atomic.self
     }
 
-    @Test("Load namespace exists")
-    func loadNamespaceExists() {
+    @Test
+    func `Load namespace exists`() {
         _ = CPU.Atomic.Load.self
     }
 
-    @Test("Store namespace exists")
-    func storeNamespaceExists() {
+    @Test
+    func `Store namespace exists`() {
         _ = CPU.Atomic.Store.self
     }
 
@@ -36,8 +36,8 @@ struct CPUAtomicTests {
 
     @Suite("Load.Ordering")
     struct LoadOrderingTests {
-        @Test("relaxed and acquiring are distinct")
-        func casesDistinct() {
+        @Test
+        func `relaxed and acquiring are distinct`() {
             let relaxed = CPU.Atomic.Load.Ordering.relaxed
             let acquiring = CPU.Atomic.Load.Ordering.acquiring
             if case .relaxed = relaxed, case .acquiring = acquiring {
@@ -47,8 +47,8 @@ struct CPUAtomicTests {
             }
         }
 
-        @Test("Ordering is Sendable")
-        func isSendable() {
+        @Test
+        func `Ordering is Sendable`() {
             let ordering: any Sendable = CPU.Atomic.Load.Ordering.relaxed
             #expect(ordering is CPU.Atomic.Load.Ordering)
         }
@@ -58,8 +58,8 @@ struct CPUAtomicTests {
 
     @Suite("Store.Ordering")
     struct StoreOrderingTests {
-        @Test("relaxed and releasing are distinct")
-        func casesDistinct() {
+        @Test
+        func `relaxed and releasing are distinct`() {
             let relaxed = CPU.Atomic.Store.Ordering.relaxed
             let releasing = CPU.Atomic.Store.Ordering.releasing
             if case .relaxed = relaxed, case .releasing = releasing {
@@ -69,8 +69,8 @@ struct CPUAtomicTests {
             }
         }
 
-        @Test("Ordering is Sendable")
-        func isSendable() {
+        @Test
+        func `Ordering is Sendable`() {
             let ordering: any Sendable = CPU.Atomic.Store.Ordering.relaxed
             #expect(ordering is CPU.Atomic.Store.Ordering)
         }
@@ -80,44 +80,44 @@ struct CPUAtomicTests {
 
     @Suite("UInt8")
     struct UInt8Tests {
-        @Test("load relaxed")
-        func loadRelaxed() {
+        @Test
+        func `load relaxed`() {
             var value: UInt8 = 42
             let loaded = CPU.Atomic.load(&value, ordering: .relaxed)
             #expect(loaded == 42)
         }
 
-        @Test("load acquiring")
-        func loadAcquiring() {
+        @Test
+        func `load acquiring`() {
             var value: UInt8 = 0xFF
             let loaded = CPU.Atomic.load(&value, ordering: .acquiring)
             #expect(loaded == 0xFF)
         }
 
-        @Test("store relaxed")
-        func storeRelaxed() {
+        @Test
+        func `store relaxed`() {
             var value: UInt8 = 0
             CPU.Atomic.store(&value, 42, ordering: .relaxed)
             #expect(value == 42)
         }
 
-        @Test("store releasing")
-        func storeReleasing() {
+        @Test
+        func `store releasing`() {
             var value: UInt8 = 0
             CPU.Atomic.store(&value, 1, ordering: .releasing)
             #expect(value == 1)
         }
 
-        @Test("load does not modify original")
-        func loadPreservesValue() {
+        @Test
+        func `load does not modify original`() {
             var value: UInt8 = 99
             _ = CPU.Atomic.load(&value, ordering: .relaxed)
             _ = CPU.Atomic.load(&value, ordering: .acquiring)
             #expect(value == 99)
         }
 
-        @Test("store then load round-trips")
-        func roundTrip() {
+        @Test
+        func `store then load round-trips`() {
             var value: UInt8 = 0
             CPU.Atomic.store(&value, 0xAB, ordering: .releasing)
             let loaded = CPU.Atomic.load(&value, ordering: .acquiring)
@@ -129,36 +129,36 @@ struct CPUAtomicTests {
 
     @Suite("UInt32")
     struct UInt32Tests {
-        @Test("load relaxed")
-        func loadRelaxed() {
+        @Test
+        func `load relaxed`() {
             var value: UInt32 = 0xDEAD
             let loaded = CPU.Atomic.load(&value, ordering: .relaxed)
             #expect(loaded == 0xDEAD)
         }
 
-        @Test("load acquiring")
-        func loadAcquiring() {
+        @Test
+        func `load acquiring`() {
             var value: UInt32 = 0xCAFE_BABE
             let loaded = CPU.Atomic.load(&value, ordering: .acquiring)
             #expect(loaded == 0xCAFE_BABE)
         }
 
-        @Test("store relaxed")
-        func storeRelaxed() {
+        @Test
+        func `store relaxed`() {
             var value: UInt32 = 0
             CPU.Atomic.store(&value, 42, ordering: .relaxed)
             #expect(value == 42)
         }
 
-        @Test("store releasing")
-        func storeReleasing() {
+        @Test
+        func `store releasing`() {
             var value: UInt32 = 0
             CPU.Atomic.store(&value, 0xDEAD_BEEF, ordering: .releasing)
             #expect(value == 0xDEAD_BEEF)
         }
 
-        @Test("sequential stores visible")
-        func sequentialStores() {
+        @Test
+        func `sequential stores visible`() {
             var value: UInt32 = 0
             CPU.Atomic.store(&value, 1, ordering: .relaxed)
             CPU.Atomic.store(&value, 2, ordering: .relaxed)
@@ -167,8 +167,8 @@ struct CPUAtomicTests {
             #expect(loaded == 3)
         }
 
-        @Test("zero and max values")
-        func extremes() {
+        @Test
+        func `zero and max values`() {
             var value: UInt32 = 0
             CPU.Atomic.store(&value, UInt32.max, ordering: .relaxed)
             #expect(CPU.Atomic.load(&value, ordering: .relaxed) == UInt32.max)
@@ -182,36 +182,36 @@ struct CPUAtomicTests {
 
     @Suite("UInt64")
     struct UInt64Tests {
-        @Test("load relaxed")
-        func loadRelaxed() {
+        @Test
+        func `load relaxed`() {
             var value: UInt64 = 0xDEAD_BEEF_CAFE_BABE
             let loaded = CPU.Atomic.load(&value, ordering: .relaxed)
             #expect(loaded == 0xDEAD_BEEF_CAFE_BABE)
         }
 
-        @Test("load acquiring")
-        func loadAcquiring() {
+        @Test
+        func `load acquiring`() {
             var value: UInt64 = 0x0123_4567_89AB_CDEF
             let loaded = CPU.Atomic.load(&value, ordering: .acquiring)
             #expect(loaded == 0x0123_4567_89AB_CDEF)
         }
 
-        @Test("store relaxed")
-        func storeRelaxed() {
+        @Test
+        func `store relaxed`() {
             var value: UInt64 = 0
             CPU.Atomic.store(&value, 42, ordering: .relaxed)
             #expect(value == 42)
         }
 
-        @Test("store releasing")
-        func storeReleasing() {
+        @Test
+        func `store releasing`() {
             var value: UInt64 = 0
             CPU.Atomic.store(&value, UInt64.max, ordering: .releasing)
             #expect(value == UInt64.max)
         }
 
-        @Test("orderings produce same result single-threaded")
-        func orderingsEquivalent() {
+        @Test
+        func `orderings produce same result single-threaded`() {
             var v1: UInt64 = 0
             var v2: UInt64 = 0
             CPU.Atomic.store(&v1, 42, ordering: .relaxed)

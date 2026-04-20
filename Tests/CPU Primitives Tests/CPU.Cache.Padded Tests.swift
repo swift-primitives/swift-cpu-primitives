@@ -16,14 +16,14 @@ import Synchronization
 @Suite("CPU.Cache.Padded")
 struct CPUCachePaddedTests {
 
-    @Test("wraps a trivial value and reads it back")
-    func trivialValueRoundTrip() {
+    @Test
+    func `wraps a trivial value and reads it back`() {
         let padded = CPU.Cache.Padded<Int>(42)
         #expect(padded.value == 42)
     }
 
-    @Test("wraps a larger struct and reads fields back")
-    func structRoundTrip() {
+    @Test
+    func `wraps a larger struct and reads fields back`() {
         struct Payload: Sendable {
             var a: Int
             var b: Int
@@ -35,21 +35,21 @@ struct CPUCachePaddedTests {
         #expect(padded.value.c == 3.5)
     }
 
-    @Test("storage address is 128-byte aligned")
-    func storageIs128ByteAligned() {
+    @Test
+    func `storage address is 128-byte aligned`() {
         let padded = CPU.Cache.Padded<UInt64>(0xDEADBEEF)
         let rawAddress = unsafe UInt(bitPattern: padded._storage)
         #expect(rawAddress % 128 == 0)
     }
 
-    @Test("byte count is at least 128 for small T")
-    func byteCountSmallT() {
+    @Test
+    func `byte count is at least 128 for small T`() {
         let padded = CPU.Cache.Padded<UInt8>(7)
         #expect(padded._byteCount == 128)
     }
 
-    @Test("byte count matches stride for T larger than 128 bytes")
-    func byteCountLargeT() {
+    @Test
+    func `byte count matches stride for T larger than 128 bytes`() {
         struct Jumbo: Sendable {
             var chunk: (Int, Int, Int, Int, Int, Int, Int, Int,
                         Int, Int, Int, Int, Int, Int, Int, Int,
@@ -63,8 +63,8 @@ struct CPUCachePaddedTests {
         #expect(padded._byteCount >= 128)
     }
 
-    @Test("wraps Atomic<Int> and atomic operations work through accessor")
-    func wrapsAtomicInt() {
+    @Test
+    func `wraps Atomic<Int> and atomic operations work through accessor`() {
         let padded = CPU.Cache.Padded<Atomic<Int>>(Atomic<Int>(0))
         padded.value.store(42, ordering: .releasing)
         let loaded = padded.value.load(ordering: .acquiring)
@@ -79,8 +79,8 @@ struct CPUCachePaddedTests {
         #expect(padded.value.load(ordering: .acquiring) == 100)
     }
 
-    @Test("two padded atomics on different cache lines")
-    func twoPaddedAtomicsOnSeparateLines() {
+    @Test
+    func `two padded atomics on different cache lines`() {
         let a = CPU.Cache.Padded<Atomic<Int>>(Atomic<Int>(1))
         let b = CPU.Cache.Padded<Atomic<Int>>(Atomic<Int>(2))
         let addressA = unsafe UInt(bitPattern: a._storage)

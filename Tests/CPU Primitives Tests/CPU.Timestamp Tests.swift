@@ -15,23 +15,23 @@ import Testing
 @Suite("CPU.Timestamp")
 struct CPUTimestampTests {
 
-    @Test("read returns a value")
-    func readReturnsValue() {
+    @Test
+    func `read returns a value`() {
         let value = CPU.Timestamp.read()
         // We can't assert much about the value, but it should be non-zero
         // on any real hardware after the system has been running
         #expect(value.rawValue > 0)
     }
 
-    @Test("read can be called repeatedly")
-    func readRepeated() {
+    @Test
+    func `read can be called repeatedly`() {
         for _ in 0..<1000 {
             let _ = CPU.Timestamp.read()
         }
     }
 
-    @Test("successive reads generally increase")
-    func successiveReadsIncrease() {
+    @Test
+    func `successive reads generally increase`() {
         // Note: This is not guaranteed by the portable API,
         // but should hold on most hardware under normal conditions
         let first = CPU.Timestamp.read()
@@ -54,8 +54,8 @@ struct CPUTimestampTests {
         }
     }
 
-    @Test("read from concurrent tasks")
-    func readFromConcurrentTasks() async {
+    @Test
+    func `read from concurrent tasks`() async {
         let taskCount = 4
         let iterations = 100
 
