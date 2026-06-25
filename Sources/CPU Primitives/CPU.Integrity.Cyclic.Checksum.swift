@@ -16,23 +16,28 @@ extension CPU.Integrity.Cyclic {
     /// handling of checksum values and prevent accidental mixing with
     /// other numeric values.
     public struct Checksum: Sendable, Hashable, RawRepresentable, Comparable, ExpressibleByIntegerLiteral {
+        /// The underlying 32-bit CRC value.
         public var rawValue: UInt32
 
+        /// Creates a checksum from its raw 32-bit CRC value.
         @inlinable
         public init(rawValue: UInt32) {
             self.rawValue = rawValue
         }
 
+        /// Creates a checksum from a 32-bit CRC value.
         @inlinable
         public init(_ rawValue: UInt32) {
             self.rawValue = rawValue
         }
 
+        /// Creates a checksum from an integer literal.
         @inlinable
         public init(integerLiteral value: UInt32) {
             self.rawValue = value
         }
 
+        /// Returns whether one checksum's raw value orders before another's.
         @inlinable
         public static func < (lhs: Self, rhs: Self) -> Bool {
             lhs.rawValue < rhs.rawValue

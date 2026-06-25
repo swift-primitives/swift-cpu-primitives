@@ -10,6 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 import Testing
+
 @testable import CPU_Primitives
 
 @Suite("CPU.Cache")
@@ -17,30 +18,30 @@ struct CPUCacheTests {
 
     @Suite("Prefetch")
     struct PrefetchTests {
-        @Test("prefetch read completes without error")
-        func prefetchReadCompletes() {
-            var buffer = [UInt8](repeating: 0, count: 64)
-            buffer.withUnsafeBytes { ptr in
-                CPU.Cache.prefetch.read(ptr.baseAddress!)
+        @Test
+        func `prefetch read completes without error`() {
+            let buffer = [UInt8](repeating: 0, count: 64)
+            unsafe buffer.withUnsafeBytes { ptr in
+                unsafe CPU.Cache.prefetch.read(ptr.baseAddress!)
             }
         }
 
-        @Test("prefetch write completes without error")
-        func prefetchWriteCompletes() {
+        @Test
+        func `prefetch write completes without error`() {
             var buffer = [UInt8](repeating: 0, count: 64)
-            buffer.withUnsafeMutableBytes { ptr in
-                CPU.Cache.prefetch.write(ptr.baseAddress!)
+            unsafe buffer.withUnsafeMutableBytes { ptr in
+                unsafe CPU.Cache.prefetch.write(ptr.baseAddress!)
             }
         }
 
-        @Test("prefetch can be called on array elements")
-        func prefetchArrayElements() {
+        @Test
+        func `prefetch can be called on array elements`() {
             var data = [Int](repeating: 0, count: 1000)
-            data.withUnsafeMutableBufferPointer { buffer in
+            unsafe data.withUnsafeMutableBufferPointer { buffer in
                 // Prefetch multiple cache lines
                 for i in stride(from: 0, to: buffer.count, by: 8) {
-                    let ptr = buffer.baseAddress! + i
-                    CPU.Cache.prefetch.read(UnsafeRawPointer(ptr))
+                    let ptr = unsafe buffer.baseAddress! + i
+                    unsafe CPU.Cache.prefetch.read(UnsafeRawPointer(ptr))
                 }
             }
         }

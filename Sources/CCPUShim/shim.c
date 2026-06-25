@@ -30,118 +30,8 @@
     #endif
 #endif
 
-// ============================================================================
-// Spin Hints
-// ============================================================================
-
-void swift_cpu_spin_hint_v1(void) {
-#if SWIFT_CPU_X86
-    #if defined(SWIFT_CPU_MSVC)
-        _mm_pause();
-    #else
-        __builtin_ia32_pause();
-    #endif
-#elif SWIFT_CPU_ARM64 || SWIFT_CPU_ARM32
-    __asm__ __volatile__("yield" ::: "memory");
-#else
-    // No-op on unsupported architectures
-    (void)0;
-#endif
-}
-
-// ============================================================================
-// Memory Barriers
-// ============================================================================
-
-void swift_cpu_barrier_compiler_v1(void) {
-    // Compiler barrier only - no CPU instruction
-#if defined(SWIFT_CPU_MSVC)
-    _ReadWriteBarrier();
-#else
-    __asm__ __volatile__("" ::: "memory");
-#endif
-}
-
-void swift_cpu_barrier_full_v1(void) {
-#if SWIFT_CPU_X86
-    #if defined(SWIFT_CPU_MSVC)
-        _mm_mfence();
-    #else
-        __asm__ __volatile__("mfence" ::: "memory");
-    #endif
-#elif SWIFT_CPU_ARM64
-    __asm__ __volatile__("dmb ish" ::: "memory");
-#elif SWIFT_CPU_ARM32
-    __asm__ __volatile__("dmb ish" ::: "memory");
-#else
-    // Fallback: compiler barrier (weakest guarantee)
-    __asm__ __volatile__("" ::: "memory");
-#endif
-}
-
-void swift_cpu_barrier_load_v1(void) {
-#if SWIFT_CPU_X86
-    #if defined(SWIFT_CPU_MSVC)
-        _mm_lfence();
-    #else
-        __asm__ __volatile__("lfence" ::: "memory");
-    #endif
-#elif SWIFT_CPU_ARM64
-    __asm__ __volatile__("dmb ishld" ::: "memory");
-#elif SWIFT_CPU_ARM32
-    __asm__ __volatile__("dmb ish" ::: "memory"); // ARM32 doesn't have ishld
-#else
-    __asm__ __volatile__("" ::: "memory");
-#endif
-}
-
-void swift_cpu_barrier_store_v1(void) {
-#if SWIFT_CPU_X86
-    #if defined(SWIFT_CPU_MSVC)
-        _mm_sfence();
-    #else
-        __asm__ __volatile__("sfence" ::: "memory");
-    #endif
-#elif SWIFT_CPU_ARM64
-    __asm__ __volatile__("dmb ishst" ::: "memory");
-#elif SWIFT_CPU_ARM32
-    __asm__ __volatile__("dmb ish" ::: "memory"); // ARM32 doesn't have ishst
-#else
-    __asm__ __volatile__("" ::: "memory");
-#endif
-}
-
-// ============================================================================
-// Cache Prefetch
-// ============================================================================
-
-void swift_cpu_cache_prefetch_read_v1(const void* ptr) {
-#if SWIFT_CPU_X86
-    #if defined(SWIFT_CPU_MSVC)
-        _mm_prefetch((const char*)ptr, _MM_HINT_T0);
-    #else
-        __builtin_prefetch(ptr, 0, 3); // read, high locality
-    #endif
-#elif SWIFT_CPU_ARM64 || SWIFT_CPU_ARM32
-    __builtin_prefetch(ptr, 0, 3); // read, high locality
-#else
-    (void)ptr; // No-op
-#endif
-}
-
-void swift_cpu_cache_prefetch_write_v1(void* ptr) {
-#if SWIFT_CPU_X86
-    #if defined(SWIFT_CPU_MSVC)
-        _mm_prefetch((const char*)ptr, _MM_HINT_T0);
-    #else
-        __builtin_prefetch(ptr, 1, 3); // write, high locality
-    #endif
-#elif SWIFT_CPU_ARM64 || SWIFT_CPU_ARM32
-    __builtin_prefetch(ptr, 1, 3); // write, high locality
-#else
-    (void)ptr; // No-op
-#endif
-}
+// Single-instruction operations (barriers, spin, prefetch) are now
+// static inline in barrier.h. Only multi-instruction operations remain here.
 
 // ============================================================================
 // Timestamp Counter
@@ -181,8 +71,14 @@ unsigned int swift_cpu_integrity_cyclic_castagnoli_v1(const void* data, unsigned
     // Hardware instructions work with raw CRC, so we apply XOR at boundaries
     unsigned int crc = ~seed;
 
-#if SWIFT_CPU_X86 && !defined(SWIFT_CPU_MSVC)
-    // x86 with GCC/Clang: Use hardware CRC32C if available
+#if SWIFT_CPU_X86 && !defined(SWIFT_CPU_MSVC) && defined(__SSE4_2__)
+    // x86 with GCC/Clang: Use hardware CRC32C if available.
+    // Gated on __SSE4_2__ so __builtin_ia32_crc32* is only reached when
+    // the compiler target enables the CRC32 feature. Without this gate,
+    // multi-arch builds (notably iOS Simulator, which builds both arm64
+    // and x86_64 slices) fail to compile the x86_64 slice because the
+    // built-in emits "needs target feature crc32" unless -msse4.2 is on.
+    // Matches the ARM pattern below, which gates on __ARM_FEATURE_CRC32.
     // Process 8 bytes at a time
     while (len >= 8) {
         crc = (unsigned int)__builtin_ia32_crc32di(crc, *(const unsigned long long*)buf);
@@ -206,8 +102,8 @@ unsigned int swift_cpu_integrity_cyclic_castagnoli_v1(const void* data, unsigned
         crc = __builtin_ia32_crc32qi(crc, *buf);
     }
     return ~crc;
-#elif SWIFT_CPU_ARM64
-    // ARM64: Use hardware CRC32C
+#elif SWIFT_CPU_ARM64 && defined(__ARM_FEATURE_CRC32)
+    // ARM64 with CRC32 extension: Use hardware CRC32C
     while (len >= 8) {
         __asm__ __volatile__(
             "crc32cx %w0, %w0, %1"

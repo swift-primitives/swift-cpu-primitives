@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import CCPUShim
+public import CCPUShim
 
 extension CPU.Barrier {
     /// Compiler-only barrier accessor.
@@ -24,11 +24,11 @@ extension CPU.Barrier {
 }
 
 extension CPU.Barrier.Compiler {
-    /// Compiler-only barrier. No CPU instruction emitted.
+    /// Compiler-only barrier.
     ///
-    /// Prevents the compiler from reordering memory operations across
-    /// this point. Does NOT prevent CPU reordering. Does NOT provide
-    /// inter-thread synchronization.
+    /// No CPU instruction emitted. Prevents the compiler from reordering
+    /// memory operations across this point. Does NOT prevent CPU reordering.
+    /// Does NOT provide inter-thread synchronization.
     ///
     /// ## When to Use
     ///
@@ -40,7 +40,7 @@ extension CPU.Barrier.Compiler {
     ///
     /// - Cross-thread synchronization (use `hardware.*` or atomics)
     /// - Ensuring visibility to other cores (use `hardware.*`)
-    @inline(__always)
+    @inline(always)
     public func callAsFunction() {
         swift_cpu_barrier_compiler_v1()
     }

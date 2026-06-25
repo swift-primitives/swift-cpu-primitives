@@ -10,6 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 import Testing
+
 @testable import CPU_Primitives
 
 @Suite("CPU.Barrier")
@@ -17,13 +18,13 @@ struct CPUBarrierTests {
 
     @Suite("Compiler")
     struct CompilerTests {
-        @Test("compiler barrier completes without error")
-        func compilerBarrierCompletes() {
+        @Test
+        func `compiler barrier completes without error`() {
             CPU.Barrier.compiler()
         }
 
-        @Test("compiler barrier can be called repeatedly")
-        func compilerBarrierRepeated() {
+        @Test
+        func `compiler barrier can be called repeatedly`() {
             for _ in 0..<1000 {
                 CPU.Barrier.compiler()
             }
@@ -32,23 +33,23 @@ struct CPUBarrierTests {
 
     @Suite("Hardware")
     struct HardwareTests {
-        @Test("full barrier completes without error")
-        func fullBarrierCompletes() {
+        @Test
+        func `full barrier completes without error`() {
             CPU.Barrier.hardware.full()
         }
 
-        @Test("load barrier completes without error")
-        func loadBarrierCompletes() {
+        @Test
+        func `load barrier completes without error`() {
             CPU.Barrier.hardware.load()
         }
 
-        @Test("store barrier completes without error")
-        func storeBarrierCompletes() {
+        @Test
+        func `store barrier completes without error`() {
             CPU.Barrier.hardware.store()
         }
 
-        @Test("barriers can be called in sequence")
-        func barriersInSequence() {
+        @Test
+        func `barriers can be called in sequence`() {
             for _ in 0..<100 {
                 CPU.Barrier.hardware.load()
                 CPU.Barrier.hardware.store()
@@ -57,8 +58,8 @@ struct CPUBarrierTests {
         }
     }
 
-    @Test("compiler barrier alone does not synchronize threads")
-    func compilerBarrierNotSynchronization() {
+    @Test
+    func `compiler barrier alone does not synchronize threads`() {
         // This is a documentation test - we cannot easily prove the negative,
         // but we can demonstrate that the barrier returns without blocking
         var value = 0

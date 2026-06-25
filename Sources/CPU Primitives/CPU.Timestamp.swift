@@ -35,18 +35,22 @@ extension CPU {
     /// proper serialization). Use architecture-specific APIs when you need
     /// ordered measurements.
     public struct Timestamp: Sendable, Hashable, RawRepresentable, ExpressibleByIntegerLiteral {
+        /// The underlying 64-bit counter value.
         public var rawValue: UInt64
 
+        /// Creates a timestamp from a raw 64-bit counter value.
         @inlinable
         public init(rawValue: UInt64) {
             self.rawValue = rawValue
         }
 
+        /// Creates a timestamp from a 64-bit counter value.
         @inlinable
         public init(_ rawValue: UInt64) {
             self.rawValue = rawValue
         }
 
+        /// Creates a timestamp from an integer literal.
         @inlinable
         public init(integerLiteral value: UInt64) {
             self.rawValue = value

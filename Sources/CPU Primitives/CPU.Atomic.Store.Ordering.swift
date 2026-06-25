@@ -9,5 +9,13 @@
 //
 // ===----------------------------------------------------------------------===//
 
-@_exported public import Binary_Primitives
-@_exported public import Binary_Serializable_Primitives
+extension CPU.Atomic.Store {
+    /// Ordering semantics for store operations.
+    public enum Ordering: Sendable {
+        /// No ordering guarantees.
+        case relaxed
+
+        /// Release semantics: prior reads/writes cannot be reordered after this store.
+        case releasing
+    }
+}

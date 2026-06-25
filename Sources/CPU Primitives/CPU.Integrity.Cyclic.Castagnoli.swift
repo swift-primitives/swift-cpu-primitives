@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import CCPUShim
+public import CCPUShim
 
 extension CPU.Integrity.Cyclic {
     /// Castagnoli polynomial (0x1EDC6F41) operations.
@@ -34,16 +34,19 @@ extension CPU.Integrity.Cyclic.Castagnoli {
     ///   - data: The data to compute the checksum for.
     ///   - seed: Initial CRC value (default 0). Use for chained computation.
     /// - Returns: The CRC-32C checksum.
-    @inline(__always)
+    @unsafe
+    @inline(always)
     public static func compute(
         _ data: UnsafeRawBufferPointer,
         seed: CPU.Integrity.Cyclic.Checksum = 0
     ) -> CPU.Integrity.Cyclic.Checksum {
         guard let baseAddress = data.baseAddress else { return seed }
-        return .init(swift_cpu_integrity_cyclic_castagnoli_v1(
-            baseAddress,
-            UInt64(data.count),
-            seed.rawValue
-        ))
+        return .init(
+            unsafe swift_cpu_integrity_cyclic_castagnoli_v1(
+                baseAddress,
+                UInt64(data.count),
+                seed.rawValue
+            )
+        )
     }
 }
