@@ -36,12 +36,14 @@ extension CPU.Integrity.Cyclic {
         public init(integerLiteral value: UInt32) {
             self.rawValue = value
         }
+    }
+}
 
-        /// Returns whether one checksum's raw value orders before another's.
-        @inlinable
-        public static func < (lhs: Self, rhs: Self) -> Bool {
-            lhs.rawValue < rhs.rawValue
-        }
+extension CPU.Integrity.Cyclic.Checksum {
+    /// Returns whether one checksum's raw value orders before another's.
+    @inlinable
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+        lhs.rawValue < rhs.rawValue
     }
 }
 
