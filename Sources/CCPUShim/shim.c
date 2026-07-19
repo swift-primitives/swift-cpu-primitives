@@ -64,82 +64,15 @@ unsigned long long swift_cpu_timestamp_read_v1(void) {
 // CRC-32C (Castagnoli Polynomial)
 // ============================================================================
 
-unsigned int swift_cpu_integrity_cyclic_castagnoli_v1(const void* data, unsigned long long len, unsigned int seed) {
+// Portable table-based software implementation, unconditionally compiled
+// (not gated behind the hardware-feature #if ladder below) so it is
+// directly callable — and cross-checkable against the hardware path — on
+// every host regardless of which branch swift_cpu_integrity_cyclic_castagnoli_v1
+// itself compiles to. This is also the table the fallback branch of that
+// function delegates to.
+unsigned int swift_cpu_integrity_cyclic_castagnoli_software_v1(const void* data, unsigned long long len, unsigned int seed) {
     const unsigned char* buf = (const unsigned char*)data;
 
-    // CRC-32C standard: initial XOR with 0xFFFFFFFF, final XOR with 0xFFFFFFFF
-    // Hardware instructions work with raw CRC, so we apply XOR at boundaries
-    unsigned int crc = ~seed;
-
-#if SWIFT_CPU_X86 && !defined(SWIFT_CPU_MSVC) && defined(__SSE4_2__)
-    // x86 with GCC/Clang: Use hardware CRC32C if available.
-    // Gated on __SSE4_2__ so __builtin_ia32_crc32* is only reached when
-    // the compiler target enables the CRC32 feature. Without this gate,
-    // multi-arch builds (notably iOS Simulator, which builds both arm64
-    // and x86_64 slices) fail to compile the x86_64 slice because the
-    // built-in emits "needs target feature crc32" unless -msse4.2 is on.
-    // Matches the ARM pattern below, which gates on __ARM_FEATURE_CRC32.
-    // Process 8 bytes at a time
-    while (len >= 8) {
-        crc = (unsigned int)__builtin_ia32_crc32di(crc, *(const unsigned long long*)buf);
-        buf += 8;
-        len -= 8;
-    }
-    // Process 4 bytes
-    if (len >= 4) {
-        crc = __builtin_ia32_crc32si(crc, *(const unsigned int*)buf);
-        buf += 4;
-        len -= 4;
-    }
-    // Process 2 bytes
-    if (len >= 2) {
-        crc = __builtin_ia32_crc32hi(crc, *(const unsigned short*)buf);
-        buf += 2;
-        len -= 2;
-    }
-    // Process remaining byte
-    if (len >= 1) {
-        crc = __builtin_ia32_crc32qi(crc, *buf);
-    }
-    return ~crc;
-#elif SWIFT_CPU_ARM64 && defined(__ARM_FEATURE_CRC32)
-    // ARM64 with CRC32 extension: Use hardware CRC32C
-    while (len >= 8) {
-        __asm__ __volatile__(
-            "crc32cx %w0, %w0, %1"
-            : "+r"(crc)
-            : "r"(*(const unsigned long long*)buf)
-        );
-        buf += 8;
-        len -= 8;
-    }
-    if (len >= 4) {
-        __asm__ __volatile__(
-            "crc32cw %w0, %w0, %w1"
-            : "+r"(crc)
-            : "r"(*(const unsigned int*)buf)
-        );
-        buf += 4;
-        len -= 4;
-    }
-    if (len >= 2) {
-        __asm__ __volatile__(
-            "crc32ch %w0, %w0, %w1"
-            : "+r"(crc)
-            : "r"(*(const unsigned short*)buf)
-        );
-        buf += 2;
-        len -= 2;
-    }
-    if (len >= 1) {
-        __asm__ __volatile__(
-            "crc32cb %w0, %w0, %w1"
-            : "+r"(crc)
-            : "r"(*buf)
-        );
-    }
-    return ~crc;
-#else
     // Software fallback using Castagnoli polynomial (0x82F63B78 reflected)
     static const unsigned int table[256] = {
         0x00000000, 0xF26B8303, 0xE13B70F7, 0x1350F3F4,
@@ -208,12 +141,110 @@ unsigned int swift_cpu_integrity_cyclic_castagnoli_v1(const void* data, unsigned
         0xBE2DA0A5, 0x4C4623A6, 0x5F16D052, 0xAD7D5351
     };
 
-    crc = ~crc;
+    // CRC-32C standard: initial XOR with 0xFFFFFFFF, final XOR with 0xFFFFFFFF.
+    // `seed` is the caller-visible (non-inverted) chaining value; `crc` is the
+    // raw working state fed through the table, which starts life already
+    // inverted (~seed) and is inverted back to caller-visible form on return —
+    // it must NOT be re-inverted between here and the loop below, or the
+    // state the loop actually processes silently reverts to plain `seed`,
+    // diverging from every hardware path (which never had this bug).
+    unsigned int crc = ~seed;
     while (len--) {
         crc = table[(crc ^ *buf++) & 0xFF] ^ (crc >> 8);
     }
-    crc = ~crc;
-#endif
+    return ~crc;
+}
 
-    return crc;
+unsigned int swift_cpu_integrity_cyclic_castagnoli_v1(const void* data, unsigned long long len, unsigned int seed) {
+#if SWIFT_CPU_X86 && !defined(SWIFT_CPU_MSVC) && defined(__SSE4_2__)
+    const unsigned char* buf = (const unsigned char*)data;
+
+    // CRC-32C standard: initial XOR with 0xFFFFFFFF, final XOR with 0xFFFFFFFF
+    // Hardware instructions work with raw CRC, so we apply XOR at boundaries
+    unsigned int crc = ~seed;
+
+    // x86 with GCC/Clang: Use hardware CRC32C if available.
+    // Gated on __SSE4_2__ so __builtin_ia32_crc32* is only reached when
+    // the compiler target enables the CRC32 feature. Without this gate,
+    // multi-arch builds (notably iOS Simulator, which builds both arm64
+    // and x86_64 slices) fail to compile the x86_64 slice because the
+    // built-in emits "needs target feature crc32" unless -msse4.2 is on.
+    // Matches the ARM pattern below, which gates on __ARM_FEATURE_CRC32.
+    // Process 8 bytes at a time
+    while (len >= 8) {
+        crc = (unsigned int)__builtin_ia32_crc32di(crc, *(const unsigned long long*)buf);
+        buf += 8;
+        len -= 8;
+    }
+    // Process 4 bytes
+    if (len >= 4) {
+        crc = __builtin_ia32_crc32si(crc, *(const unsigned int*)buf);
+        buf += 4;
+        len -= 4;
+    }
+    // Process 2 bytes
+    if (len >= 2) {
+        crc = __builtin_ia32_crc32hi(crc, *(const unsigned short*)buf);
+        buf += 2;
+        len -= 2;
+    }
+    // Process remaining byte
+    if (len >= 1) {
+        crc = __builtin_ia32_crc32qi(crc, *buf);
+    }
+    return ~crc;
+#elif SWIFT_CPU_ARM64 && defined(__ARM_FEATURE_CRC32)
+    const unsigned char* buf = (const unsigned char*)data;
+
+    // CRC-32C standard: initial XOR with 0xFFFFFFFF, final XOR with 0xFFFFFFFF
+    // Hardware instructions work with raw CRC, so we apply XOR at boundaries
+    unsigned int crc = ~seed;
+
+    // ARM64 with CRC32 extension: Use hardware CRC32C
+    while (len >= 8) {
+        __asm__ __volatile__(
+            "crc32cx %w0, %w0, %1"
+            : "+r"(crc)
+            : "r"(*(const unsigned long long*)buf)
+        );
+        buf += 8;
+        len -= 8;
+    }
+    if (len >= 4) {
+        __asm__ __volatile__(
+            "crc32cw %w0, %w0, %w1"
+            : "+r"(crc)
+            : "r"(*(const unsigned int*)buf)
+        );
+        buf += 4;
+        len -= 4;
+    }
+    if (len >= 2) {
+        __asm__ __volatile__(
+            "crc32ch %w0, %w0, %w1"
+            : "+r"(crc)
+            : "r"(*(const unsigned short*)buf)
+        );
+        buf += 2;
+        len -= 2;
+    }
+    if (len >= 1) {
+        __asm__ __volatile__(
+            "crc32cb %w0, %w0, %w1"
+            : "+r"(crc)
+            : "r"(*buf)
+        );
+    }
+    return ~crc;
+#else
+    // Software fallback: delegate to the standalone, unconditionally-
+    // compiled implementation above so there is exactly one copy of the
+    // table and the state-inversion logic (previously this branch carried
+    // its own duplicate copy that re-inverted `crc` — already ~seed from
+    // line above — back to plain `seed` before the loop, silently
+    // diverging from every hardware path above; see
+    // swift_cpu_integrity_cyclic_castagnoli_software_v1's comment for the
+    // invariant this must preserve).
+    return swift_cpu_integrity_cyclic_castagnoli_software_v1(data, len, seed);
+#endif
 }
