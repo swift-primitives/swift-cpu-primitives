@@ -14,6 +14,8 @@
 // its home is the platform-neutral atomics module. The prior placement made
 // the type invisible on Windows (which does not consume the POSIX chain).
 
+public import Synchronization
+
 extension CPU.Atomic {
     /// A one-way atomic boolean flag for cross-thread signaling.
     ///
@@ -40,17 +42,29 @@ extension CPU.Atomic {
     ///
     /// ## Thread Safety
     /// Flag is safe to share across threads without additional synchronization.
-    /// Uses `@unchecked Sendable` because internal state is protected by
-    /// atomic operations with acquire/release memory ordering.
+    /// Backed by `Synchronization.Atomic<Bool>` rather than a raw byte reached
+    /// through `withUnsafeMutablePointer(to:)` on class storage — the prior
+    /// implementation took the address of a class-instance stored property via
+    /// an `inout` access and handed it to `CPU.Atomic.load`/`.store`, whose own
+    /// documented contract (`CPU.Atomic.swift`) is "memory not owned by a Swift
+    /// `Atomic<T>`". `inout`-to-pointer on a class property is only guaranteed
+    /// valid for the duration of that single call; nothing prevents the
+    /// compiler from materializing a temporary copy-in/copy-out instead of the
+    /// field's real address, and Swift's exclusivity model does not account for
+    /// a concurrent thread observing that address outside the formal access
+    /// scope. `Atomic<Bool>` is the correct, upstream-provided tool for
+    /// same-object cross-thread atomic state and carries no such hazard.
+    /// `@unchecked Sendable` because the sole stored property is itself an
+    /// atomic, race-free cell.
     public final class Flag: @unchecked Sendable {
         @usableFromInline
-        var _value: UInt8
+        let _atomic: Atomic<Bool>
 
         /// Creates a new flag with the given initial value.
         ///
         /// - Parameter initialValue: The initial state of the flag. Defaults to `false`.
         public init(_ initialValue: Bool = false) {
-            self._value = initialValue ? 1 : 0
+            self._atomic = .init(initialValue)
         }
     }
 }
@@ -61,9 +75,7 @@ extension CPU.Atomic.Flag {
     /// Uses acquiring memory ordering to ensure visibility of all
     /// writes that happened before `set()` was called.
     public var isSet: Bool {
-        unsafe withUnsafeMutablePointer(to: &_value) { ptr in
-            unsafe (CPU.Atomic.load(ptr, ordering: .acquiring) != 0)
-        }
+        _atomic.load(ordering: .acquiring)
     }
 
     /// Sets the flag to `true`.
@@ -74,8 +86,6 @@ extension CPU.Atomic.Flag {
     /// This operation is idempotent - calling it multiple times
     /// has the same effect as calling it once.
     public func set() {
-        unsafe withUnsafeMutablePointer(to: &_value) { ptr in
-            unsafe CPU.Atomic.store(ptr, 1, ordering: .releasing)
-        }
+        _atomic.store(true, ordering: .releasing)
     }
 }
