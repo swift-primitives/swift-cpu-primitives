@@ -13,8 +13,11 @@ import Testing
 
 @testable import CPU_Primitives
 
-@Suite("CPU.Integrity.Cyclic.Castagnoli")
-struct CPUIntegrityCyclicCastagnoliTests {
+@Suite
+struct `CPU.Integrity.Cyclic.Castagnoli Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `compute returns consistent results`() {

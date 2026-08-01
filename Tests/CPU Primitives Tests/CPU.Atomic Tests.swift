@@ -13,8 +13,11 @@ import Testing
 
 @testable import CPU_Primitives
 
-@Suite("CPU.Atomic")
-struct CPUAtomicTests {
+@Suite
+struct `CPU.Atomic Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     // MARK: - Namespace
 
@@ -35,8 +38,8 @@ struct CPUAtomicTests {
 
     // MARK: - Load Ordering
 
-    @Suite("Load.Ordering")
-    struct LoadOrderingTests {
+    @Suite
+    struct `Load Ordering Tests` {
         @Test
         func `relaxed and acquiring are distinct`() {
             let relaxed = CPU.Atomic.Load.Ordering.relaxed
@@ -57,8 +60,8 @@ struct CPUAtomicTests {
 
     // MARK: - Store Ordering
 
-    @Suite("Store.Ordering")
-    struct StoreOrderingTests {
+    @Suite
+    struct `Store Ordering Tests` {
         @Test
         func `relaxed and releasing are distinct`() {
             let relaxed = CPU.Atomic.Store.Ordering.relaxed
@@ -79,8 +82,8 @@ struct CPUAtomicTests {
 
     // MARK: - UInt8
 
-    @Suite("UInt8")
-    struct UInt8Tests {
+    @Suite
+    struct `UInt8 Tests` {
         @Test
         func `load relaxed`() {
             var value: UInt8 = 42
@@ -128,8 +131,8 @@ struct CPUAtomicTests {
 
     // MARK: - UInt32
 
-    @Suite("UInt32")
-    struct UInt32Tests {
+    @Suite
+    struct `UInt32 Tests` {
         @Test
         func `load relaxed`() {
             var value: UInt32 = 0xDEAD
@@ -181,8 +184,8 @@ struct CPUAtomicTests {
 
     // MARK: - UInt64
 
-    @Suite("UInt64")
-    struct UInt64Tests {
+    @Suite
+    struct `UInt64 Tests` {
         @Test
         func `load relaxed`() {
             var value: UInt64 = 0xDEAD_BEEF_CAFE_BABE

@@ -13,20 +13,25 @@ import Testing
 
 @testable import CPU_Primitives
 
-@Suite("CPU.Timestamp")
-struct CPUTimestampTests {
+@Suite
+struct `CPU.Timestamp Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `read returns a value`() {
         let value = CPU.Timestamp.read()
         // We can't assert much about the value, but it should be non-zero
         // on any real hardware after the system has been running
+        // swift-linter:disable:next raw value access
+        // REASON: test-only sanity assertion on an opaque hardware counter; no typed comparison API is exposed for this.
         #expect(value.rawValue > 0)
     }
 
     @Test
     func `read can be called repeatedly`() {
-        for _ in 0..<1000 {
+        (0..<1000).forEach { _ in
             let _ = CPU.Timestamp.read()
         }
     }
@@ -39,7 +44,7 @@ struct CPUTimestampTests {
 
         // Do some work to ensure time passes
         var sum: UInt64 = 0
-        for i: UInt64 in 0..<10000 {
+        (UInt64(0)..<10000).forEach { i in
             sum &+= i
         }
         _ = sum  // Prevent optimization
@@ -48,6 +53,8 @@ struct CPUTimestampTests {
 
         // We expect second >= first, but due to weakest-semantics
         // we only warn if it decreases significantly
+        // swift-linter:disable:next raw value access
+        // REASON: test-only ordering check on an opaque hardware counter; no typed comparison API is exposed for this.
         if second.rawValue < first.rawValue {
             // This could happen under virtualization or migration
             // Just note it, don't fail
@@ -61,10 +68,10 @@ struct CPUTimestampTests {
         let iterations = 100
 
         await withTaskGroup(of: CPU.Timestamp.self) { group in
-            for _ in 0..<taskCount {
+            (0..<taskCount).forEach { _ in
                 group.addTask {
                     var lastValue: CPU.Timestamp = 0
-                    for _ in 0..<iterations {
+                    (0..<iterations).forEach { _ in
                         lastValue = CPU.Timestamp.read()
                     }
                     return lastValue
@@ -73,6 +80,8 @@ struct CPUTimestampTests {
 
             // Collect all results - they should all be non-zero
             for await value in group {
+                // swift-linter:disable:next raw value access
+                // REASON: test-only sanity assertion on an opaque hardware counter; no typed comparison API is exposed for this.
                 #expect(value.rawValue > 0)
             }
         }

@@ -13,11 +13,14 @@ import Testing
 
 @testable import CPU_Primitives
 
-@Suite("CPU.Barrier")
-struct CPUBarrierTests {
+@Suite
+struct `CPU.Barrier Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
-    @Suite("Compiler")
-    struct CompilerTests {
+    @Suite
+    struct `Compiler Tests` {
         @Test
         func `compiler barrier completes without error`() {
             CPU.Barrier.compiler()
@@ -31,8 +34,8 @@ struct CPUBarrierTests {
         }
     }
 
-    @Suite("Hardware")
-    struct HardwareTests {
+    @Suite
+    struct `Hardware Tests` {
         @Test
         func `full barrier completes without error`() {
             CPU.Barrier.hardware.full()

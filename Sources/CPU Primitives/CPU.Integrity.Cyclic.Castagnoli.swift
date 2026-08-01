@@ -45,6 +45,8 @@ extension CPU.Integrity.Cyclic.Castagnoli {
             unsafe swift_cpu_integrity_cyclic_castagnoli_v1(
                 baseAddress,
                 UInt64(data.count),
+                // swift-linter:disable:next raw value access
+                // REASON: same-package implementation bridging the typed Checksum to the C FFI seed parameter.
                 seed.rawValue
             )
         )
@@ -65,7 +67,7 @@ extension CPU.Integrity.Cyclic.Castagnoli {
     /// exists for regression coverage only.
     @unsafe
     @inline(always)
-    static func computeUsingSoftwareFallback(
+    static func software(
         _ data: UnsafeRawBufferPointer,
         seed: CPU.Integrity.Cyclic.Checksum = 0
     ) -> CPU.Integrity.Cyclic.Checksum {
@@ -74,6 +76,8 @@ extension CPU.Integrity.Cyclic.Castagnoli {
             unsafe swift_cpu_integrity_cyclic_castagnoli_software_v1(
                 baseAddress,
                 UInt64(data.count),
+                // swift-linter:disable:next raw value access
+                // REASON: same-package implementation bridging the typed Checksum to the C FFI seed parameter.
                 seed.rawValue
             )
         )

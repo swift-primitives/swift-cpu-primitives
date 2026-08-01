@@ -43,6 +43,8 @@ extension CPU.Integrity.Cyclic.Checksum {
     /// Returns whether one checksum's raw value orders before another's.
     @inlinable
     public static func < (lhs: Self, rhs: Self) -> Bool {
+        // swift-linter:disable:next raw value access
+        // REASON: Checksum's own extension-initializer boundary — this is the type's own operator implementation.
         lhs.rawValue < rhs.rawValue
     }
 }

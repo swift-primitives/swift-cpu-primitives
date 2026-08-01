@@ -13,8 +13,11 @@ import Testing
 
 @testable import CPU_Primitives
 
-@Suite("CPU.Spin")
-struct CPUSpinTests {
+@Suite
+struct `CPU.Spin Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `hint completes without error`() {

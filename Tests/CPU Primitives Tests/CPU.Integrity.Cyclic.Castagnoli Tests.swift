@@ -16,7 +16,7 @@ import Testing
 // Regression coverage for fable-448 F-001: the CRC-32C software fallback
 // re-inverted its working state (processing from `seed` instead of `~seed`)
 // immediately before the table loop, silently diverging from every hardware
-// path. `computeUsingSoftwareFallback` always calls the unconditionally
+// path. `software` always calls the unconditionally
 // compiled `swift_cpu_integrity_cyclic_castagnoli_software_v1` symbol, so the
 // software path is exercised here regardless of the host's own hardware
 // CRC32C support (this machine has hardware CRC32C, so `compute(_:seed:)`
@@ -35,7 +35,7 @@ extension CPU.Integrity.Cyclic.Castagnoli.Tests.Unit {
         let data = Array("123456789".utf8)
 
         let crc = unsafe data.withUnsafeBytes { buffer in
-            unsafe CPU.Integrity.Cyclic.Castagnoli.computeUsingSoftwareFallback(buffer)
+            unsafe CPU.Integrity.Cyclic.Castagnoli.software(buffer)
         }
 
         #expect(crc == 0xE306_9283)
@@ -49,7 +49,7 @@ extension CPU.Integrity.Cyclic.Castagnoli.Tests.Unit {
             unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
         let software = unsafe data.withUnsafeBytes { buffer in
-            unsafe CPU.Integrity.Cyclic.Castagnoli.computeUsingSoftwareFallback(buffer)
+            unsafe CPU.Integrity.Cyclic.Castagnoli.software(buffer)
         }
 
         #expect(hardware == software)
@@ -64,14 +64,14 @@ extension CPU.Integrity.Cyclic.Castagnoli.Tests.`Edge Case` {
         let combined = Array("abcdef".utf8)
 
         let combinedSoftware = unsafe combined.withUnsafeBytes { buffer in
-            unsafe CPU.Integrity.Cyclic.Castagnoli.computeUsingSoftwareFallback(buffer)
+            unsafe CPU.Integrity.Cyclic.Castagnoli.software(buffer)
         }
 
         let part1 = unsafe data1.withUnsafeBytes { buffer in
-            unsafe CPU.Integrity.Cyclic.Castagnoli.computeUsingSoftwareFallback(buffer)
+            unsafe CPU.Integrity.Cyclic.Castagnoli.software(buffer)
         }
         let chained = unsafe data2.withUnsafeBytes { buffer in
-            unsafe CPU.Integrity.Cyclic.Castagnoli.computeUsingSoftwareFallback(buffer, seed: part1)
+            unsafe CPU.Integrity.Cyclic.Castagnoli.software(buffer, seed: part1)
         }
 
         #expect(combinedSoftware == chained)

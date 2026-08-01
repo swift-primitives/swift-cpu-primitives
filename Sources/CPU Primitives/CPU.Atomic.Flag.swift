@@ -48,8 +48,8 @@ extension CPU.Atomic {
     /// an `inout` access and handed it to `CPU.Atomic.load`/`.store`, whose own
     /// documented contract (`CPU.Atomic.swift`) is "memory not owned by a Swift
     /// `Atomic<T>`". `inout`-to-pointer on a class property is only guaranteed
-    /// valid for the duration of that single call; nothing prevents the
-    /// compiler from materializing a temporary copy-in/copy-out instead of the
+    /// valid for the duration of that single call; nothing prevents a
+    /// temporary copy-in/copy-out from being materialized instead of the
     /// field's real address, and Swift's exclusivity model does not account for
     /// a concurrent thread observing that address outside the formal access
     /// scope. `Atomic<Bool>` is the correct, upstream-provided tool for

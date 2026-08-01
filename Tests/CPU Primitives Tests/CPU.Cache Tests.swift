@@ -13,11 +13,14 @@ import Testing
 
 @testable import CPU_Primitives
 
-@Suite("CPU.Cache")
-struct CPUCacheTests {
+@Suite
+struct `CPU.Cache Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
-    @Suite("Prefetch")
-    struct PrefetchTests {
+    @Suite
+    struct `Prefetch Tests` {
         @Test
         func `prefetch read completes without error`() {
             let buffer = [UInt8](repeating: 0, count: 64)

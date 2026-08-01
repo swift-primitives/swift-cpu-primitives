@@ -14,8 +14,11 @@ import Testing
 
 @testable import CPU_Primitives
 
-@Suite("CPU.Cache.Padded")
-struct CPUCachePaddedTests {
+@Suite
+struct `CPU.Cache.Padded Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `wraps a trivial value and reads it back`() {
