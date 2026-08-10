@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import CCPUShim
+public import CPU_Shims
 
 extension CPU.Barrier {
     /// Hardware barrier accessor.

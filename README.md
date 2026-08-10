@@ -82,7 +82,7 @@ Two library products over an internal C shim. Depends only on the `Binary` primi
 
 | Product | Target | Purpose |
 |---------|--------|---------|
-| `CPU Primitives` | `Sources/CPU Primitives/` | The `CPU` namespace: pointer atomics (`CPU.Atomic`), memory barriers (`CPU.Barrier`), cache hints (`CPU.Cache` prefetch + `CPU.Cache.Padded`), spin-wait (`CPU.Spin`), hardware CRC-32C (`CPU.Integrity.Cyclic.Castagnoli`), and high-resolution timestamps (`CPU.Timestamp`). Backed by the internal `CCPUShim` C target. |
+| `CPU Primitives` | `Sources/CPU Primitives/` | The `CPU` namespace: pointer atomics (`CPU.Atomic`), memory barriers (`CPU.Barrier`), cache hints (`CPU.Cache` prefetch + `CPU.Cache.Padded`), spin-wait (`CPU.Spin`), hardware CRC-32C (`CPU.Integrity.Cyclic.Castagnoli`), and high-resolution timestamps (`CPU.Timestamp`). Backed by the internal `CPU Shims` C target. |
 | `CPU Primitives Test Support` | `Tests/Support/` | Re-exports the main target for downstream test consumers. |
 
 Foundation-free.
