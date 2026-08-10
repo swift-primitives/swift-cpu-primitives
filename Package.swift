@@ -28,13 +28,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "CCPUShim",
+            name: "CPU Shims",
             dependencies: []
         ),
         .target(
             name: "CPU Primitives",
             dependencies: [
-                .target(name: "CCPUShim"),
+                .target(name: "CPU Shims"),
                 .product(name: "Binary Primitives", package: "swift-binary-primitives"),
                 .product(name: "Binary Serializable Primitives", package: "swift-binary-serializer-primitives"),
             ]
