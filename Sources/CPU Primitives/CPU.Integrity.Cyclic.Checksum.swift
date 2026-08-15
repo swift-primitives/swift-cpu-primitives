@@ -15,7 +15,9 @@ extension CPU.Integrity.Cyclic {
     /// Wraps a raw `UInt32` CRC value. Use this type to ensure type-safe
     /// handling of checksum values and prevent accidental mixing with
     /// other numeric values.
-    public struct Checksum: Sendable, Hashable, RawRepresentable, Comparable, ExpressibleByIntegerLiteral {
+    public struct Checksum: Sendable, Hashable, RawRepresentable, Comparable,
+        ExpressibleByIntegerLiteral
+    {
         /// The underlying 32-bit CRC value.
         public var rawValue: UInt32
 
