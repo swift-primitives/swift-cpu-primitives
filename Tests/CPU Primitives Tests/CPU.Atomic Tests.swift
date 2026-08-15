@@ -220,7 +220,10 @@ struct `CPU.Atomic Tests` {
             var v2: UInt64 = 0
             CPU.Atomic.store(&v1, 42, ordering: .relaxed)
             CPU.Atomic.store(&v2, 42, ordering: .releasing)
-            #expect(CPU.Atomic.load(&v1, ordering: .relaxed) == CPU.Atomic.load(&v2, ordering: .acquiring))
+            #expect(
+                CPU.Atomic.load(&v1, ordering: .relaxed)
+                    == CPU.Atomic.load(&v2, ordering: .acquiring)
+            )
         }
     }
 }

@@ -53,7 +53,9 @@ extension CPU.Atomic.Flag.Tests.Unit {
     }
 
     @Test
-    func `concurrent set and isSet on a shared instance never trap under exclusivity enforcement`() async {
+    func `concurrent set and isSet on a shared instance never trap under exclusivity enforcement`()
+        async
+    {
         let flag = CPU.Atomic.Flag()
         let workerCount = 32
         let iterationsPerWorker = 50_000
