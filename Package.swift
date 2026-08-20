@@ -1,15 +1,15 @@
-// swift-tools-version: 6.3.3
+// swift-tools-version: 6.4
 
 import PackageDescription
 
 let package = Package(
     name: "swift-cpu-primitives",
     platforms: [
-        .macOS("27"),
-        .iOS("27"),
-        .tvOS("27"),
-        .watchOS("27"),
-        .visionOS("27"),
+        .macOS(.v27),
+        .iOS(.v27),
+        .tvOS(.v27),
+        .watchOS(.v27),
+        .visionOS(.v27),
     ],
     products: [
         .library(
@@ -22,9 +22,18 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-primitives/swift-binary-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-binary-serializer-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-bit-primitives.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-primitives/swift-binary-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-binary-serializer-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-bit-primitives.git",
+            branch: "main"
+        ),
     ],
     targets: [
         .target(
@@ -36,7 +45,10 @@ let package = Package(
             dependencies: [
                 .target(name: "CPU Shims"),
                 .product(name: "Binary Primitives", package: "swift-binary-primitives"),
-                .product(name: "Binary Serializable Primitives", package: "swift-binary-serializer-primitives"),
+                .product(
+                    name: "Binary Serializable Primitives",
+                    package: "swift-binary-serializer-primitives"
+                ),
             ]
         ),
         .target(
