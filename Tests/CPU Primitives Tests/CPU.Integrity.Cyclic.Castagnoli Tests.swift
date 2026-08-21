@@ -1,26 +1,7 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-cpu-primitives open source project
-//
-// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-cpu-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import CPU_Primitives
 
-// Regression coverage for fable-448 F-001: the CRC-32C software fallback
-// re-inverted its working state (processing from `seed` instead of `~seed`)
-// immediately before the table loop, silently diverging from every hardware
-// path. `software` always calls the unconditionally
-// compiled `swift_cpu_integrity_cyclic_castagnoli_software_v1` symbol, so the
-// software path is exercised here regardless of the host's own hardware
-// CRC32C support (this machine has hardware CRC32C, so `compute(_:seed:)`
-// alone would never reach the buggy branch).
 extension CPU.Integrity.Cyclic.Castagnoli {
     @Suite struct Tests {
         @Suite struct Unit {}
@@ -31,7 +12,7 @@ extension CPU.Integrity.Cyclic.Castagnoli {
 extension CPU.Integrity.Cyclic.Castagnoli.Tests.Unit {
     @Test
     func `software fallback matches known CRC-32C test vector`() {
-        // "123456789" has a well-known CRC-32C value: 0xE3069283
+
         let data = Array("123456789".utf8)
 
         let crc = unsafe data.withUnsafeBytes { buffer in

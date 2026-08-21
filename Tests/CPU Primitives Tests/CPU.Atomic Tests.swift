@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-cpu-primitives open source project
-//
-// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-cpu-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import CPU_Primitives
@@ -18,8 +7,6 @@ struct `CPU.Atomic Tests` {
     @Suite struct Unit {}
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
-
-    // MARK: - Namespace
 
     @Test
     func `Atomic namespace exists`() {
@@ -36,8 +23,6 @@ struct `CPU.Atomic Tests` {
         _ = CPU.Atomic.Store.self
     }
 
-    // MARK: - Load Ordering
-
     @Suite
     struct `Load Ordering Tests` {
         @Test
@@ -45,7 +30,7 @@ struct `CPU.Atomic Tests` {
             let relaxed = CPU.Atomic.Load.Ordering.relaxed
             let acquiring = CPU.Atomic.Load.Ordering.acquiring
             if case .relaxed = relaxed, case .acquiring = acquiring {
-                // distinct
+
             } else {
                 Issue.record("Cases should be distinct")
             }
@@ -58,8 +43,6 @@ struct `CPU.Atomic Tests` {
         }
     }
 
-    // MARK: - Store Ordering
-
     @Suite
     struct `Store Ordering Tests` {
         @Test
@@ -67,7 +50,7 @@ struct `CPU.Atomic Tests` {
             let relaxed = CPU.Atomic.Store.Ordering.relaxed
             let releasing = CPU.Atomic.Store.Ordering.releasing
             if case .relaxed = relaxed, case .releasing = releasing {
-                // distinct
+
             } else {
                 Issue.record("Cases should be distinct")
             }
@@ -79,8 +62,6 @@ struct `CPU.Atomic Tests` {
             #expect(ordering is CPU.Atomic.Store.Ordering)
         }
     }
-
-    // MARK: - UInt8
 
     @Suite
     struct `UInt8 Tests` {
@@ -128,8 +109,6 @@ struct `CPU.Atomic Tests` {
             #expect(loaded == 0xAB)
         }
     }
-
-    // MARK: - UInt32
 
     @Suite
     struct `UInt32 Tests` {
@@ -181,8 +160,6 @@ struct `CPU.Atomic Tests` {
             #expect(CPU.Atomic.load(&value, ordering: .relaxed) == 0)
         }
     }
-
-    // MARK: - UInt64
 
     @Suite
     struct `UInt64 Tests` {

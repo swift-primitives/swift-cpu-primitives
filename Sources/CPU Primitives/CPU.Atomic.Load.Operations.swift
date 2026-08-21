@@ -1,25 +1,7 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-cpu-primitives open source project
-//
-// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-cpu-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 public import CPU_Shims
 
-// MARK: - UInt8
-
 extension CPU.Atomic {
-    /// Performs a load with the specified memory ordering.
-    ///
-    /// - Parameters:
-    ///   - pointer: The memory location to load from.
-    ///   - ordering: The memory ordering for the load.
-    /// - Returns: The value at the memory location.
+
     @inline(always)
     public static func load(
         _ pointer: UnsafeMutablePointer<UInt8>,
@@ -35,15 +17,8 @@ extension CPU.Atomic {
     }
 }
 
-// MARK: - UInt32
-
 extension CPU.Atomic {
-    /// Performs a load with the specified memory ordering.
-    ///
-    /// - Parameters:
-    ///   - pointer: The memory location to load from.
-    ///   - ordering: The memory ordering for the load.
-    /// - Returns: The value at the memory location.
+
     @inline(always)
     public static func load(
         _ pointer: UnsafeMutablePointer<UInt32>,
@@ -59,15 +34,8 @@ extension CPU.Atomic {
     }
 }
 
-// MARK: - UInt64
-
 extension CPU.Atomic {
-    /// Performs a load with the specified memory ordering.
-    ///
-    /// - Parameters:
-    ///   - pointer: The memory location to load from.
-    ///   - ordering: The memory ordering for the load.
-    /// - Returns: The value at the memory location.
+
     @inline(always)
     public static func load(
         _ pointer: UnsafeMutablePointer<UInt64>,

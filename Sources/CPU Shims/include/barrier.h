@@ -1,23 +1,6 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-cpu-primitives open source project
-//
-// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-cpu-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
-// Single-instruction CPU operations: barriers, spin hints, cache prefetch.
-//
-// These are static inline because each compiles to exactly one instruction.
-// A function call (~4-10 cycles) would dominate the actual work (~1 cycle).
-
 #ifndef SWIFT_CPU_BARRIER_SHIM_H
 #define SWIFT_CPU_BARRIER_SHIM_H
 
-// Architecture detection
 #if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) || defined(_M_IX86)
     #define SWIFT_CPU_BARRIER_X86 1
 #elif defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)
@@ -35,10 +18,6 @@
     #endif
 #endif
 
-// ============================================================================
-// Spin Hints
-// ============================================================================
-
 static inline void swift_cpu_spin_hint_v1(void) {
 #if SWIFT_CPU_BARRIER_X86
     #if defined(SWIFT_CPU_BARRIER_MSVC)
@@ -52,10 +31,6 @@ static inline void swift_cpu_spin_hint_v1(void) {
     (void)0;
 #endif
 }
-
-// ============================================================================
-// Memory Barriers
-// ============================================================================
 
 static inline void swift_cpu_barrier_compiler_v1(void) {
 #if defined(SWIFT_CPU_BARRIER_MSVC)
@@ -113,10 +88,6 @@ static inline void swift_cpu_barrier_store_v1(void) {
 #endif
 }
 
-// ============================================================================
-// Cache Prefetch
-// ============================================================================
-
 static inline void swift_cpu_cache_prefetch_read_v1(const void* ptr) {
 #if SWIFT_CPU_BARRIER_X86
     #if defined(SWIFT_CPU_BARRIER_MSVC)
@@ -145,4 +116,4 @@ static inline void swift_cpu_cache_prefetch_write_v1(void* ptr) {
 #endif
 }
 
-#endif // SWIFT_CPU_BARRIER_SHIM_H
+#endif

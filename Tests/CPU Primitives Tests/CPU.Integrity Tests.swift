@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-cpu-primitives open source project
-//
-// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-cpu-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Testing
 
 @testable import CPU_Primitives
@@ -51,12 +40,10 @@ struct `CPU.Integrity.Cyclic.Castagnoli Tests` {
         let data2: [UInt8] = [0x04, 0x05, 0x06]
         let combined: [UInt8] = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06]
 
-        // Compute CRC of combined data
         let crcCombined = unsafe combined.withUnsafeBytes { buffer in
             unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
 
-        // Compute CRC in two parts using seed
         let crcPart1 = unsafe data1.withUnsafeBytes { buffer in
             unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
@@ -69,7 +56,7 @@ struct `CPU.Integrity.Cyclic.Castagnoli Tests` {
 
     @Test
     func `compute known test vector`() {
-        // "123456789" has a well-known CRC-32C value: 0xE3069283
+
         let data = Array("123456789".utf8)
 
         let crc = unsafe data.withUnsafeBytes { buffer in
@@ -97,14 +84,13 @@ struct `CPU.Integrity.Cyclic.Castagnoli Tests` {
 
     @Test
     func `compute large data`() {
-        // Test with 1MB of data
+
         let data = [UInt8](repeating: 0xAB, count: 1024 * 1024)
 
         let crc = unsafe data.withUnsafeBytes { buffer in
             unsafe CPU.Integrity.Cyclic.Castagnoli.compute(buffer)
         }
 
-        // Just verify it completes and returns a value
-        #expect(crc != 0)  // Very unlikely to be 0 for non-trivial data
+        #expect(crc != 0)
     }
 }

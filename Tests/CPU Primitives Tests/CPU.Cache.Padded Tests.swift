@@ -1,14 +1,3 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-cpu-primitives open source project
-//
-// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-cpu-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Synchronization
 import Testing
 
@@ -60,7 +49,7 @@ struct `CPU.Cache.Padded Tests` {
                     Int, Int, Int, Int, Int, Int, Int, Int,
                     Int, Int, Int, Int, Int, Int, Int, Int,
                     Int, Int, Int, Int
-                )  // 160 bytes on 64-bit
+                )
         }
         let zero = (
             0, 0, 0, 0, 0, 0, 0, 0,
